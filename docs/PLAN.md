@@ -1,6 +1,6 @@
 # Release plan
 
-Prerequisites: a working one-click prototype, macOS CUPS access, a compatible Munbyn driver, Python, and GitHub publish access. Runtime records and customer downloads remain outside the clean source repository.
+Prerequisites: a working one-click prototype, macOS CUPS access, a compatible 4×6 thermal-printer driver, Python, and GitHub publish access. Runtime records and customer downloads remain outside the clean source repository.
 
 1. Establish a clean source tree with synthetic fixtures and a privacy publication gate.
 2. Replace machine-specific setup with a reusable installer, pinned dependencies, own return-address configuration, and explicit upgrade/uninstall behavior.
@@ -15,3 +15,11 @@ Risks: TCGplayer can change PDF or page layouts; unsupported input must fail saf
 Rollback: keep the previous release ZIP; reinstall it into the same dedicated folders and reload the extension. Preserve settings/ledger during rollback. Do not delete print intents to recover a queue error. The community build does not modify the author’s working private installation during development.
 
 Future, uncommitted scope: Windows helper, Chrome Web Store distribution, signed/notarized app, broader address fonts/formats, and additional physical printer/browser certification. Each needs its own acceptance tests before support is advertised.
+
+## 1.1 — Configurable 4×6 thermal printers
+
+The requested download/setup/one-click flow must not depend on Munbyn-only driver controls. Select the user's installed queue and verified 4×6 media during setup; preserve the driver's saved defaults unless explicit supported overrides are supplied. Keep the existing official PDF capture, paired output, private state and replay/recovery rules.
+
+Steps: implement shared media discovery/validation, migrate existing Munbyn presets, test generic-driver install/health/paired submission and layout rejection, independently review changes, validate an isolated packaged fresh install, publish a versioned update after green CI. Confirm the operating-system distribution scope separately; the current installer remains macOS.
+
+Validation: fictional generic drivers using CUPS/PWG media names and PPD dimensions; reject wrong media and unsupported overrides; preserve old config/ledger; one controlled fictional physical reference test announced before submission. Revert to1.0.0 with the retained ledger if needed. No arbitrary CUPS option strings or browser-selected paths are added.

@@ -10,9 +10,9 @@ globalThis.chrome={
 };
 await import('../extension/background.js');
 const send=(message,who=sender)=>new Promise(resolve=>handler(message,who,resolve));
-assert.equal((await send({type:'TCGPRINT_ARM',clientBuild:'1.0.0',orderId:oid,token},{...sender,frameId:1})).ok,false);
-assert.equal((await send({type:'TCGPRINT_ARM',clientBuild:'1.0.0',orderId:oid,token},{...sender,url:'https://evil.example/orders/'+oid})).ok,false);
-assert.equal((await send({type:'TCGPRINT_ARM',clientBuild:'1.0.0',orderId:oid,token})).state,'armed');
+assert.equal((await send({type:'TCGPRINT_ARM',clientBuild:'1.1.0',orderId:oid,token},{...sender,frameId:1})).ok,false);
+assert.equal((await send({type:'TCGPRINT_ARM',clientBuild:'1.1.0',orderId:oid,token},{...sender,url:'https://evil.example/orders/'+oid})).ok,false);
+assert.equal((await send({type:'TCGPRINT_ARM',clientBuild:'1.1.0',orderId:oid,token})).state,'armed');
 const payload={type:'TCGPRINT_PDF',orderId:oid,token,pdfBase64:'JVBERi0='};
 const results=await Promise.all([send(payload),send(payload)]);
 assert.equal(results.filter(r=>r.ok).length,1);assert.equal(printCalls,1);assert.equal(session.pending,undefined);assert.equal(local.lastResult.state,'completed');

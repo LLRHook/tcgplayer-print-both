@@ -1,5 +1,5 @@
 (() => {
-  const CLIENT_BUILD = '1.0.0';
+  const CLIENT_BUILD = '1.1.0';
   const PACKING = '[data-testid="OrderDetails_CustomerDetails_btnPackingSlip"]';
   const DEFAULT = '[data-testid="OrderDetails_PackingSlipList_btnDownloadDefaultByRelease"]';
   const HEADER = '[data-testid="txtOrderHeader"]';

@@ -1,4 +1,4 @@
-const BUILD_VERSION='1.0.0';
+const BUILD_VERSION='1.1.0';
 async function lastResult(){
  const el=document.getElementById('last-result');
  try{

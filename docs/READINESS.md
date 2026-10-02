@@ -4,10 +4,14 @@ Assessment date:2026-10-02. The original prototype had no community SRS or relea
 
 Requirements coverage: FR-1 through FR-10 and NFR-1 through NFR-6 are implemented and covered by the checks listed in VERIFICATION.md. Must:14/14 verified; committed Should:2/2 verified. No uncovered Must or known critical/high defect remains. FR-1/FR-2 rely on prior real Helium workflow evidence plus current component checks; Chrome's separate live seller-account test remains outside the certified browser evidence.
 
-Plan phases: clean public tree, reusable installation, printing/recovery hardening, automated/security/performance/independent checks, and reference hardware submission are complete. Hosted CI passed all four jobs on the public candidate, including the Python3.10 lock install. The tagged release is published only after the final documentation/test-record commit passes the same workflow.
+Plan phases: clean public tree, reusable installation, printing/recovery hardening, automated/security/performance/independent checks, and reference hardware submission are complete. Hosted CI passed all four jobs on the public candidate, including the Python 3.10 lock install. The tagged release is published only after the final documentation/test-record commit passes the same workflow.
 
-**Pilot: READY** within the documented macOS/Helium/compatible Munbyn/US-address scope.
+**Pilot: READY** within the documented macOS/Helium/compatible 4×6 thermal printer/US-address scope.
 
 **Community source release: READY within the documented scope.** This is the production bar for the scoped source distribution, not a claim of Chrome Web Store approval, notarization, all-model printer certification, or Windows support. GitHub's tagged release and successful Actions run provide the final publication record.
 
 Residual limitations are visible in README, INSTALL, SECURITY, PRIVACY and VERIFICATION. Users must complete normal unpacked-extension loading, supply their own return address and compatible driver, verify paper/readability, and inspect uncertain jobs before explicit recovery. No agent or AI service is required during normal use.
+
+## Version 1.1 candidate
+
+The required download/setup/one-click workflow now supports brand-independent driver media rather than requiring Munbyn-specific controls. Existing presets and private state are preserved. Generic-driver cases cover installation, health, strict size selection, unsupported overrides and one complete paired job. Independent review, 69 regression tests, fresh packaged installation and a two-sheet reference-printer test passed. Hosted CI must pass before publication. Physical certification remains limited to the reference printer.

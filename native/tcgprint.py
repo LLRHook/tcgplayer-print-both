@@ -9,7 +9,7 @@ from reportlab.pdfbase.pdfmetrics import stringWidth
 
 APP = Path(__file__).resolve().parent
 from settings import DEFAULT_STATE, validate_config
-from printer import health as printer_health, PrinterUnavailable
+from printer import health as printer_health, PrinterUnavailable, submission_options
 ORDER = re.compile(r'Order\s*Number\s*:\s*([A-Z0-9]{8}-[A-Z0-9]{6}-[A-Z0-9]{5})', re.I)
 PAGINATION = re.compile(r'Page\s*(\d+)\s*of\s*(\d+)', re.I)
 CITY = re.compile(r'^.+,\s*[A-Z]{2}\s+\d{5}(?:-\d{4})?$')
@@ -226,8 +226,7 @@ def process(source,state,output=None,reprint=False,expect=None,prepare=False,req
         db.commit()
         title='TCGplayer '+','.join(g['id'] for g in groups)
         if request_id: title+=' request '+request_id[:8]
-        args=['/usr/bin/lp','-d',conf.get('printer','RW403B'),'-t',title,'-n','1',
-              '-o','media=w288h432','-o','orientation-requested=3','-o',f'Darkness={conf["darkness"]}','-o',f'PrintSpeed={conf["print_speed"]}','-o','sides=one-sided',str(out)]
+        args=['/usr/bin/lp','-d',conf['printer'],'-t',title,'-n','1', *submission_options(conf, sum(len(g['pages'])+1 for g in groups)), str(out)]
         try:
             result=subprocess.run(args,capture_output=True,text=True,timeout=45,env={**os.environ,'LC_ALL':'C'})
             match=re.search(r'request id is (\S+)',result.stdout)

@@ -65,8 +65,8 @@ class InstallerTests(unittest.TestCase):
         self.assertEqual(installer.extension_id(json.loads((self.extension / 'manifest.json').read_text())), installer.EXTENSION_ID)
         config = json.loads((self.state / 'config.json').read_text())
         self.assertEqual(config['printer'], 'Thermal_Test')
-        self.assertEqual(config['darkness'], 14)
-        self.assertEqual(config['print_speed'], 30)
+        self.assertIsNone(config['darkness'])
+        self.assertIsNone(config['print_speed'])
         self.assertEqual((self.state / 'config.json').stat().st_mode & 0o777, 0o600)
         self.assertEqual((self.state / 'browser-helper/native-host').stat().st_mode & 0o777, 0o700)
         for browser in installer.BROWSERS:

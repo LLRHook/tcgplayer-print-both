@@ -8,6 +8,7 @@ from pathlib import Path
 import zipfile
 
 ROOT = Path(__file__).resolve().parents[1]
+ARCHIVE_ROOT = 'TCGplayer-Print-Both-Installer'
 ROOT_FILES = ('README.md', 'LICENSE', 'SECURITY.md', 'PRIVACY.md', 'requirements.txt',
               'requirements.lock', 'install.py', 'Install.command', 'Uninstall.command')
 DOC_FILES = ('INSTALL.md',)
@@ -30,7 +31,7 @@ def package(output, root=ROOT):
     try:
         with zipfile.ZipFile(temporary, 'w', compression=zipfile.ZIP_DEFLATED, compresslevel=9) as archive:
             for path in sorted(paths):
-                info = zipfile.ZipInfo('TCGplayer-Print-Both/' + path.as_posix(), (2026, 1, 1, 0, 0, 0))
+                info = zipfile.ZipInfo(ARCHIVE_ROOT + '/' + path.as_posix(), (2026, 1, 1, 0, 0, 0))
                 info.create_system = 3
                 info.external_attr = (0o100755 if path.name in {'Install.command', 'Uninstall.command'} else 0o100644) << 16
                 info.compress_type = zipfile.ZIP_DEFLATED

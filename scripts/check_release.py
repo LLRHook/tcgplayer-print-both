@@ -56,19 +56,19 @@ def verify(root=ROOT, archive=None):
         raise ValueError('Extension must remain limited to seller portal')
     lock = (root / 'requirements.lock').read_text()
     pins = re.findall(r'^([A-Za-z0-9_.-]+)==([^\s\\]+)\s*\\', lock, re.M)
-    if len(pins) != 10 or lock.count('--hash=sha256:') < len(pins):
-        raise ValueError('Expected fully hashed ten-package runtime lock')
+    if len(pins) != 11 or lock.count('--hash=sha256:') < len(pins):
+        raise ValueError('Expected fully hashed eleven-package runtime lock')
     if archive:
-        from package import ROOT_FILES, DOC_FILES
+        from package import ROOT_FILES, DOC_FILES, ARCHIVE_ROOT
         import importlib.util
         spec = importlib.util.spec_from_file_location('release_installer', root / 'install.py')
         installer = importlib.util.module_from_spec(spec); spec.loader.exec_module(installer)
         expected = set(ROOT_FILES) | {'native/' + name for name in installer.NATIVE_FILES} | {'extension/' + name for name in installer.EXTENSION_FILES} | {'docs/' + name for name in DOC_FILES}
         with zipfile.ZipFile(archive) as z:
-            actual = {info.filename.removeprefix('TCGplayer-Print-Both/') for info in z.infolist()}
+            actual = {info.filename.removeprefix(ARCHIVE_ROOT + '/') for info in z.infolist()}
             if actual != expected: raise ValueError('Release ZIP does not match exact source allowlist')
             for info in z.infolist():
-                name = info.filename.removeprefix('TCGplayer-Print-Both/')
+                name = info.filename.removeprefix(ARCHIVE_ROOT + '/')
                 data = z.read(info)
                 scan(name, data)
                 if data != (root / name).read_bytes(): raise ValueError('Release ZIP differs from current source')

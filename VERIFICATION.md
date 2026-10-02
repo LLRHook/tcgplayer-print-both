@@ -6,11 +6,11 @@ Verified locally against the sanitized community source and locked runtime depen
 
 | Gate | Evidence | Result |
 |---|---|---|
-| Python correctness | 55 unittest cases: installer, native framing, extraction, multi-page preservation, bounds, queue checks, per-click replay/reprints, recovery concurrency, retention, publication policy | PASS |
+| Python correctness | 57 unittest cases: installer, native framing, extraction, multi-page preservation, bounds, queue checks, per-click replay/reprints, recovery concurrency, retention, publication policy | PASS |
 | Browser components | All five Node suites: background trust/serialization, PDF capture/suppression, content states/trusted click/accessibility, popup diagnostics/status, current-tab navigation regression | PASS |
 | Fresh installation | Isolated new home and real hash-locked Python environment; installed helper bytes match source; framed native ping checks actual configured printer read-only | PASS |
 | Upgrade/uninstall | Synthetic private configuration, ledger and PDF retained; only owned code and registrations replaced/removed | PASS |
-| Dependency security | pip-audit 2.10.1, strict hashed lock, ten runtime packages, no advisory findings; no runtime npm dependencies | PASS |
+| Dependency security | pip-audit 2.10.1, strict hashed lock, eleven runtime packages, no advisory findings; no runtime npm dependencies | PASS |
 | Source and ZIP privacy | Public-only source tree; no private history; fictional generated fixtures; exact ZIP code/document allowlist and secret/private-artifact gate | PASS |
 | Performance | Warmed conversion medians: 3 original pages 0.041s; 30 original pages 0.415s; no print submission | PASS |
 | Physical reference printer | Current community native helper, one fictional single-page order, one combined job, CUPS IPP state9, 2 output pages and 2 sheets completed | PASS |

@@ -303,6 +303,10 @@ class InstallerTests(unittest.TestCase):
         self.assertTrue((extracted / 'install.py').exists())
         self.assertTrue((extracted / 'native/native_host.py').exists())
         self.assertFalse((extracted / 'config.json').exists())
+        with contextlib.redirect_stdout(io.StringIO()):
+            installer.uninstall(self.args, home=self.home)
+        self.assertTrue((extracted / 'install.py').exists())
+        self.assertTrue((extracted / 'Uninstall.command').exists())
 
     def test_source_overlap_rejected_before_any_install_mutation(self):
         self.args.extension_dir = self.source

@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "TCGplayer Direct Munbyn Print",
-  "version": "1.0.0",
-  "description": "Print the native packing slip and matched address label directly on your local Munbyn printer.",
+  "name": "TCGplayer Print Both",
+  "version": "1.1.0",
+  "description": "Print the native packing slip and matched address label directly on your local 4×6 thermal printer.",
   "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAk9UIvXoZ+6di0eJpFq9AC1k4ARi29fnBrYOpcAOpLYq5Z37IhwVv4HSIV011nSl0bg/McTIxV2bDdYQhcAKguYrmSUwZVjb3rTGUAniKdy6a132cczherp8qM/gIjzLdUjIr6hHrpFS8EWxR4SOVRNAVH5RHrCMGWL+wiWQuqVbhDoq1KWwChtON/Phk6xnBWK0VsoJWOcn4Z3d2uhz8+OB3bzznAnEkDfSjsBEivqx5Vs59fSEMvWDHY2q+DaQ27za0Sw9MviZ4rLGtwIgo5tg/t02onPPXo8pdeqbbkYoWJEQzTvvKrqno2H6sKidIUURbDScQTLdB4WSbCirrGwIDAQAB",
   "permissions": [
     "nativeMessaging",

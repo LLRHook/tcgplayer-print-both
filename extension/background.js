@@ -1,6 +1,6 @@
 import { HOST, ORDER_RE, orderFromUrl, eligibleDownload } from './core.js';
 
-const BUILD_VERSION = '1.0.0';
+const BUILD_VERSION = '1.1.0';
 const SELLER_ORIGIN = 'https://sellerportal.tcgplayer.com';
 function urlOrigin(value) { try { return new URL(value).origin; } catch { return null; } }
 function safeUrl(value) { try { const u = new URL(value); return u.origin + u.pathname; } catch { return null; } }

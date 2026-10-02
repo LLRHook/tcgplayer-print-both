@@ -115,19 +115,30 @@ def printer_queues(run=subprocess.run):
     return queues
 
 
-def validate_printer_options(conf, run=subprocess.run):
-    result = run(['/usr/bin/lpoptions', '-p', conf['printer'], '-l'], capture_output=True, text=True, timeout=15, env={**os.environ, 'LC_ALL': 'C'})
-    if result.returncode:
-        raise InstallError('Printer capabilities could not be read. Install the supported printer driver first.')
-    options = {}
-    for line in result.stdout.splitlines():
-        name, separator, choices = line.partition(':')
-        if separator:
-            options[name.split('/')[0]] = [item.lstrip('*') for item in choices.split()]
-    required = {'PageSize': 'w288h432', 'Darkness': str(conf['darkness']),
-                'PrintSpeed': str(conf['print_speed'])}
-    if any(value not in options.get(key, []) for key, value in required.items()):
-        raise InstallError('The printer driver must support 4×6 media and the selected darkness and speed. Install a compatible Munbyn driver.')
+def load_printer_module(source):
+    spec = importlib.util.spec_from_file_location('tcgprint_install_printer', source / 'native/printer.py')
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def configure_printer_options(conf, args, source, run=subprocess.run):
+    driver = load_printer_module(source)
+    try:
+        options, dimensions = driver.driver_options(conf['printer'], run=run)
+        media = driver.supported_media(options, dimensions)
+        if not media:
+            raise InstallError('The selected driver does not advertise 4×6 media. Set up the thermal printer with its supported driver first.')
+        if args.media:
+            conf['media'] = args.media
+        elif conf.get('media') not in media:
+            if conf.get('media') != 'auto' and conf.get('media') and not getattr(args, '_changed_printer', False):
+                raise InstallError('The saved 4×6 paper size is no longer available. Select a supported media choice with --media.')
+            conf['media'] = 'w288h432' if 'w288h432' in media else media[0]
+        driver.validate_options(conf, options, dimensions)
+    except driver.PrinterUnavailable as error:
+        raise InstallError('Printer setup failed: ' + str(error) + '. Select advertised 4×6 media; optional darkness/speed overrides need matching driver controls.') from None
+    return conf
 
 
 def configuration(state, args, settings, queues, prompt=input):
@@ -136,6 +147,9 @@ def configuration(state, args, settings, queues, prompt=input):
     if config_path.exists():
         old = json.loads(regular_file(config_path).read_text())
     conf = dict(old)
+    args._changed_printer = bool(args.printer and old.get('printer') and args.printer != old['printer'])
+    if args._changed_printer:
+        for key in ['media', 'darkness', 'print_speed']: conf.pop(key, None)
     if args.printer:
         conf['printer'] = args.printer
     elif not conf.get('printer'):
@@ -167,8 +181,11 @@ def configuration(state, args, settings, queues, prompt=input):
         conf['print_speed'] = args.speed
     if args.retention_days is not None:
         conf['retention_days'] = args.retention_days
-    conf.setdefault('darkness', 14)
-    conf.setdefault('print_speed', 30)
+    # New installs use driver defaults; legacy upgrades retain their presets.
+    if not old or args._changed_printer:
+        conf.setdefault('media', 'auto')
+        conf.setdefault('darkness', None)
+        conf.setdefault('print_speed', None)
     # Shared validation prevents installer and runtime settings drifting apart.
     return settings.validate_config(conf)
 
@@ -257,7 +274,7 @@ def install(args, *, source=SOURCE, home=None, run=subprocess.run, prompt=input)
         return
     queues = printer_queues(run)
     conf = configuration(state, args, settings, queues, prompt)
-    validate_printer_options(conf, run)
+    conf = configure_printer_options(conf, args, source, run)
     safe_path(state / 'browser-helper')
     safe_path(state / 'venv')
     with install_lock(state):
@@ -337,8 +354,9 @@ def parser():
     result.add_argument('--extension-dir', type=Path, help='Permanent unpacked-extension folder')
     result.add_argument('--printer', help='Installed CUPS thermal-printer queue name')
     result.add_argument('--address-file', type=Path, help='Private UTF-8 file containing 3–5 return-address lines')
-    result.add_argument('--darkness', type=int)
-    result.add_argument('--speed', type=int)
+    result.add_argument('--media', help='Advertised 4×6 paper-size choice; detected automatically by default')
+    result.add_argument('--darkness', type=int, help='Optional override for drivers exposing Darkness')
+    result.add_argument('--speed', type=int, help='Optional override for drivers exposing PrintSpeed')
     result.add_argument('--retention-days', type=int, help='Number of days to retain saved PDFs (1–365)')
     result.add_argument('--dry-run', action='store_true')
     result.add_argument('--uninstall', action='store_true')

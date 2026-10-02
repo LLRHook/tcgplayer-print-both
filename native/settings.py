@@ -25,14 +25,18 @@ def validate_config(config):
         except UnicodeEncodeError as error:
             raise ValueError('This release supports Western European address characters') from error
         result.append(line.strip())
-    darkness = config.get('darkness', 14)
-    speed = config.get('print_speed', 30)
+    legacy = 'media' not in config
+    media = config.get('media', 'w288h432')
+    if not isinstance(media, str) or not re.fullmatch(r'[A-Za-z0-9][A-Za-z0-9_.-]{0,127}', media):
+        raise ValueError('Select a supported 4x6 printer media choice')
+    darkness = config.get('darkness', 14 if legacy else None)
+    speed = config.get('print_speed', 30 if legacy else None)
     retention = config.get('retention_days', 30)
-    if type(darkness) is not int or not 1 <= darkness <= 16:
+    if darkness is not None and (type(darkness) is not int or not 1 <= darkness <= 16):
         raise ValueError('Darkness must be an integer from 1 to 16')
-    if type(speed) is not int or speed not in range(10, 81, 10):
+    if speed is not None and (type(speed) is not int or speed not in range(10, 81, 10)):
         raise ValueError('Print speed must be 10, 20, 30, 40, 50, 60, 70, or 80')
     if type(retention) is not int or not 1 <= retention <= 365:
         raise ValueError('Retention must be an integer from 1 to 365 days')
-    return {'printer': printer, 'return_address': result, 'darkness': darkness,
+    return {'printer': printer, 'media': media, 'return_address': result, 'darkness': darkness,
             'print_speed': speed, 'retention_days': retention}

@@ -5,7 +5,7 @@ const code=fs.readFileSync(new URL('../extension/popup.js',import.meta.url),'utf
 const settle=()=>new Promise(resolve=>setImmediate(resolve));
 function setup({response,oldWorker=false,hung=false,result,storageError,jobResponse}={}){
  const timers=new Map();const nodes=Object.fromEntries(['status','check','context','context-result','last-result','job'].map(id=>[id,{textContent:'',addEventListener(type,fn){this.click=fn;}}]));let next=0;
- vm.runInNewContext(code,{document:{getElementById:id=>nodes[id]},chrome:{storage:{local:{get:async()=>{if(storageError)throw new Error(storageError);return {lastResult:result};}}},runtime:{sendMessage:async message=>message.type==='TCGPRINT_CHECK_JOB'?jobResponse:({ok:true,printer:'Example_Queue',buildVersion:oldWorker?'old':'1.0.0'})},tabs:{query:async()=>[{id:7}],sendMessage:async()=>hung?new Promise(()=>{}):response}},Promise,JSON,setTimeout:(fn,ms)=>{timers.set(++next,{fn,ms});return next;},clearTimeout:id=>timers.delete(id)});
+ vm.runInNewContext(code,{document:{getElementById:id=>nodes[id]},chrome:{storage:{local:{get:async()=>{if(storageError)throw new Error(storageError);return {lastResult:result};}}},runtime:{sendMessage:async message=>message.type==='TCGPRINT_CHECK_JOB'?jobResponse:({ok:true,printer:'Example_Queue',buildVersion:oldWorker?'old':'1.1.0'})},tabs:{query:async()=>[{id:7}],sendMessage:async()=>hung?new Promise(()=>{}):response}},Promise,JSON,setTimeout:(fn,ms)=>{timers.set(++next,{fn,ms});return next;},clearTimeout:id=>timers.delete(id)});
  return{nodes,timers};
 }
 {
@@ -18,7 +18,7 @@ function setup({response,oldWorker=false,hung=false,result,storageError,jobRespo
  const e=setup({oldWorker:true});await settle();assert.equal(e.nodes.status.textContent,'Reload extension');
 }
 {
- const expected={ok:true,accepted:true,evidence:{frameId:0,workerBuild:'1.0.0'}};const e=setup({response:expected});await e.nodes.context.click();assert.deepEqual(JSON.parse(e.nodes['context-result'].textContent),expected);
+ const expected={ok:true,accepted:true,evidence:{frameId:0,workerBuild:'1.1.0'}};const e=setup({response:expected});await e.nodes.context.click();assert.deepEqual(JSON.parse(e.nodes['context-result'].textContent),expected);
 }
 {
  const result={ok:true,state:'completed',orderId:'TEST0001-ABCDEF-12345',job:'RW403B-51',requestId:'d70e56e0-example',pages:2,time:123};const e=setup({result});await settle();assert.deepEqual(JSON.parse(e.nodes['last-result'].textContent),result);assert.equal(e.nodes.status.textContent,'Ready · Example_Queue');

@@ -1,0 +1,13 @@
+.venv/
+__pycache__/
+*.py[cod]
+.DS_Store
+dist/
+build/
+tests/generated/
+*.pdf
+*.sqlite*
+config.json
+*.log
+*.pem
+*.key

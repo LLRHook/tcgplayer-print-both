@@ -1,0 +1,11 @@
+# Privacy
+
+The extension operates only on `sellerportal.tcgplayer.com`. A deliberate **Print both** click captures that order’s official packing-slip PDF, including buyer name, address, order reference, and item details, and sends the bytes to a helper on the same Mac. It does not collect passwords, cookies, API keys, or account tokens. It makes no analytics, AI, telemetry, or cloud-printing requests. TCGplayer’s ordinary export request still uses your existing logged-in browser session.
+
+The helper stores your return address and printer settings in `config.json`. Source and paired PDFs contain buyer information. They are saved inside your private application-state directory, alongside a print ledger containing order references, request IDs, job handles, and output paths. Directories are owner-only and files containing print data are owner-readable/writable. These permissions are not encryption; your Mac account, backup tools, and administrators may still access them.
+
+Completed/resolved PDFs older than 30 days are removed on a later print or explicit cleanup. Retention can be configured from 1 to 365 days. Cleanup is deferred while any recorded job is pending, failed, or uncertain, to preserve recovery evidence. There is no scheduled cleanup service. The ledger and settings remain until you deliberately remove them; uninstall preserves them so an upgrade or reinstall cannot silently repeat old print requests.
+
+The browser stores the latest receipt locally, including order reference, request ID, job handle, page count, and status. It does not store buyer addresses in that receipt. Diagnostic page checks can show order URLs and references. CUPS and macOS can retain printer job titles, spool data, and system logs independently of this product; app cleanup does not remove OS-managed records. Remove those through your normal Mac/printer administration if necessary.
+
+The public repository, generated test fixtures, and release ZIP use fictional examples. Never attach a customer packing slip, address screenshot, config file, or ledger to a public issue. Share a redacted error code and browser/printer version instead. Security reports should use [private reporting](SECURITY.md).

@@ -1,0 +1,48 @@
+{
+  "manifest_version": 3,
+  "name": "TCGplayer Direct Munbyn Print",
+  "version": "1.0.0",
+  "description": "Print the native packing slip and matched address label directly on your local Munbyn printer.",
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAk9UIvXoZ+6di0eJpFq9AC1k4ARi29fnBrYOpcAOpLYq5Z37IhwVv4HSIV011nSl0bg/McTIxV2bDdYQhcAKguYrmSUwZVjb3rTGUAniKdy6a132cczherp8qM/gIjzLdUjIr6hHrpFS8EWxR4SOVRNAVH5RHrCMGWL+wiWQuqVbhDoq1KWwChtON/Phk6xnBWK0VsoJWOcn4Z3d2uhz8+OB3bzznAnEkDfSjsBEivqx5Vs59fSEMvWDHY2q+DaQ27za0Sw9MviZ4rLGtwIgo5tg/t02onPPXo8pdeqbbkYoWJEQzTvvKrqno2H6sKidIUURbDScQTLdB4WSbCirrGwIDAQAB",
+  "permissions": [
+    "nativeMessaging",
+    "storage",
+    "downloads"
+  ],
+  "host_permissions": [
+    "https://sellerportal.tcgplayer.com/*"
+  ],
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://sellerportal.tcgplayer.com/*"
+      ],
+      "js": [
+        "pdf-bridge.js"
+      ],
+      "run_at": "document_start",
+      "world": "MAIN"
+    },
+    {
+      "matches": [
+        "https://sellerportal.tcgplayer.com/*"
+      ],
+      "js": [
+        "build-state.js",
+        "content.js"
+      ],
+      "css": [
+        "content.css"
+      ],
+      "run_at": "document_idle"
+    }
+  ],
+  "action": {
+    "default_title": "TCGplayer print helper",
+    "default_popup": "popup.html"
+  }
+}

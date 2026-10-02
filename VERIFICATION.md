@@ -20,6 +20,8 @@ The hardware test used isolated private state and did not replace the user's wor
 
 CUPS completion proves reported job completion, not physical darkness, paper orientation, or readability. The user confirmed the original workflow's physical output; the final fictional test records software completion. Additional printer models, macOS releases, international fonts/addresses, and future TCGplayer changes need further certification.
 
+Hosted candidate checks passed: [four-job verification run](https://github.com/LLRHook/tcgplayer-print-both/actions/runs/37042702707). The initial Python3.10 lock failure was corrected by explicitly pinning and hashing its typing-extensions dependency; all eleven runtime packages then passed the advisory audit. The tagged release must have a green workflow for its final commit.
+
 ## Repeat the automated checks
 
 Use the commands in CONTRIBUTING.md. They do not print. Hosted CI repeats Python checks on Python3.10/Linux, Python3.12/macOS14 and Python3.14/current macOS, Node24 component tests, advisory audit, performance budgets and ZIP publication checks. CI failures block cutting a release.

@@ -244,8 +244,12 @@ def install(args, *, source=SOURCE, home=None, run=subprocess.run, prompt=input)
     home = safe_path(home or Path.home())
     state = safe_path(args.state or home / 'Library/Application Support/TCGplayerDirectPrint')
     extension = safe_path(args.extension_dir or home / 'Downloads/TCGplayer-Print-Both')
-    settings = source_validation(source)
+    source = safe_path(source)
+    for destination in (state, extension):
+        if destination == source or destination in source.parents or source in destination.parents:
+            raise InstallError('Installed folders must be separate from the extracted installer source folder.')
     validate_destinations(home, state, extension)
+    settings = source_validation(source)
     if extension.exists() and not installed_identity(extension):
         raise InstallError('Extension destination contains a different project. Choose another folder.')
     if args.dry_run:

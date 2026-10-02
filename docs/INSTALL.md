@@ -7,11 +7,11 @@ This release supports macOS, a compatible Munbyn thermal-printer driver, and Hel
 1. Install **Python 3.10 or newer** from [python.org](https://www.python.org/downloads/macos/). Confirm that `python3 --version` works in Terminal. The installer creates its own Python environment; it does not use Codex or change your system packages.
 2. Add your Munbyn printer in macOS **System Settings → Printers & Scanners**. Install the compatible manufacturer driver and confirm a printer self-test works on correctly oriented direct-thermal labels.
 3. The driver must expose **4×6-inch media**, **Darkness**, and **PrintSpeed**. Default values are darkness 14 and speed 30. The installer checks the selected queue's options before installation. A generic driver without those controls is unsupported.
-4. Download and extract the public release ZIP. Keep the extracted source folder if you want to use its uninstaller later. No buyer data is included in this distribution.
+4. Download and extract the public release ZIP. It expands into `TCGplayer-Print-Both-Installer`, separate from the installed extension folder. Keep the extracted source folder if you want to use its uninstaller later. No buyer data is included in this distribution.
 
 ## Install
 
-Open Terminal in the extracted `TCGplayer-Print-Both` folder and run:
+Open Terminal in the extracted `TCGplayer-Print-Both-Installer` folder and run:
 
 ```sh
 python3 install.py

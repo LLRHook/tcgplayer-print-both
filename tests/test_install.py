@@ -286,6 +286,40 @@ class InstallerTests(unittest.TestCase):
         self.assertTrue(manifest.exists())
         self.assertTrue(self.extension.exists())
 
+    def test_typical_downloaded_zip_extract_install_has_no_destination_collision(self):
+        spec = importlib.util.spec_from_file_location('packager', ROOT / 'scripts/package.py')
+        packager = importlib.util.module_from_spec(spec); spec.loader.exec_module(packager)
+        archive_path = self.folder / 'download.zip'
+        packager.package(archive_path, root=ROOT)
+        downloads = self.home / 'Downloads'; downloads.mkdir()
+        with zipfile.ZipFile(archive_path) as archive:
+            archive.extractall(downloads)
+        extracted = downloads / packager.ARCHIVE_ROOT
+        self.assertNotEqual(extracted, self.extension)
+        self.assertTrue((extracted / 'install.py').exists())
+        with contextlib.redirect_stdout(io.StringIO()):
+            installer.install(self.args, source=extracted, home=self.home, run=self.run_command)
+        self.assertTrue((self.extension / 'manifest.json').exists())
+        self.assertTrue((extracted / 'install.py').exists())
+        self.assertTrue((extracted / 'native/native_host.py').exists())
+        self.assertFalse((extracted / 'config.json').exists())
+
+    def test_source_overlap_rejected_before_any_install_mutation(self):
+        self.args.extension_dir = self.source
+        with self.assertRaises(installer.InstallError):
+            self.install()
+        self.assertFalse(self.state.exists())
+        self.assertEqual(self.commands, [])
+        self.args.extension_dir = self.source / 'extension'
+        with self.assertRaises(installer.InstallError):
+            self.install()
+        self.assertFalse(self.state.exists())
+        self.args.extension_dir = None
+        self.args.state = self.source / 'private-state'
+        with self.assertRaises(installer.InstallError):
+            self.install()
+        self.assertFalse(self.args.state.exists())
+
     def test_package_is_deterministic_and_excludes_private_or_generated_data(self):
         spec = importlib.util.spec_from_file_location('packager', ROOT / 'scripts/package.py')
         packager = importlib.util.module_from_spec(spec); spec.loader.exec_module(packager)
@@ -307,7 +341,7 @@ class InstallerTests(unittest.TestCase):
         with zipfile.ZipFile(out) as archive:
             self.assertFalse(any(name.endswith(('.pdf', '.sqlite3')) or name.endswith('config.json') for name in archive.namelist()))
             self.assertTrue(all(info.date_time == (2026, 1, 1, 0, 0, 0) for info in archive.infolist()))
-            self.assertEqual(archive.getinfo('TCGplayer-Print-Both/Install.command').external_attr >> 16 & 0o777, 0o755)
+            self.assertEqual(archive.getinfo(packager.ARCHIVE_ROOT + '/Install.command').external_attr >> 16 & 0o777, 0o755)
 
 
 if __name__ == '__main__':
